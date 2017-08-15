@@ -1,0 +1,18 @@
+{
+  "name": "asd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "Josh Greenwell <joshgreenwell99@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "obscure-email": "^1.0.3"
+  },
+  "devDependencies": {
+    "webpack": "^3.5.4"
+  }
+}

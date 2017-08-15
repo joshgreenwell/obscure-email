@@ -1,0 +1,26 @@
+{
+  "name": "obscure-email",
+  "version": "1.0.4",
+  "description": "Obfuscates emails in the call of a function.",
+  "main": "./dist/index.js",
+  "git": "https://github.com/joshgreenwell/obscure-email.git",
+  "scripts": {
+    "build": "babel ./index.js --presets babel-preset-es2015 --out-dir dist",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha --compilers js:babel-core/register -- ./test/**/*.spec.js --verbose",
+    "test:integration": "echo 'integration tests... when I got them.'",
+    "prepublish": "npm run build"
+  },
+  "author": "Josh Greenwell",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0"
+  }
+}
