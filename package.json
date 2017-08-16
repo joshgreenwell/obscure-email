@@ -1,6 +1,6 @@
 {
   "name": "obscure-email",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Obfuscates emails in the call of a function.",
   "main": "./dist/index.js",
   "git": "https://github.com/joshgreenwell/obscure-email.git",
@@ -14,9 +14,6 @@
   },
   "author": "Josh Greenwell",
   "license": "MIT",
-  "dependencies": {
-    "lodash": "^4.17.4"
-  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.25.0",
