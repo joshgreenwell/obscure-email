@@ -1,40 +1,99 @@
-'use strict';
+"use strict";
 
-module.exports = function (email) {
-  var variation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'default';
+module.exports = function(email) {
+  var variation =
+    arguments.length > 1 && arguments[1] !== undefined
+      ? arguments[1]
+      : "[x3][*]";
 
-  var at = void 0;
-  var stars = '';
+  // Validate email
+  if (!email || !email.includes("@")) {
+    throw new Error("obscure-email: No valid email was passed!");
+  }
+
+  // Validate variation
+  var charLoc = variation.indexOf("[x");
+  var charLoc2 = variation.indexOf("[x", charLoc + 1);
+  var ranStarLoc = variation.indexOf("[r*");
+  var staticStarLoc = variation.indexOf("[*");
+
+  if (charLoc < 0 || (ranStarLoc < 0 && staticStarLoc < 0)) {
+    throw new Error("obscure-email: Variation invalid!");
+  }
+
+  // Set @ loc and star str builder
+  var at = email.indexOf("@");
+  var getStars = function getStars(stars, loop, i) {
+    if (i === loop) {
+      return stars;
+    }
+    return getStars((stars += "*"), loop, ++i);
+  };
+  var emailNoAt = email.substring(0, at);
+
+  // Vars to be used
+  var stars = "";
   var loop = void 0;
+  var regex = void 0;
   var obfuscatedEmail = void 0;
 
-  if (!email || !email.includes('@')) {
-    return null;
-  } // TODO: Throw error
+  // Determine char nums
+  regex = /\[x(.*?)\]/;
+  var numChars = +variation.match(regex)[1] || 3;
+  var subChar2 = variation.substring(charLoc + 1).match(regex);
+  var numChars2 = (subChar2 && +subChar2[1]) || 0;
+  var parsedNumChars = numChars + numChars2;
 
-  at = email.indexOf('@');
-  if (variation === 'fir3rs' || variation === 'end3rs') {
-    loop = Math.floor(Math.random() * 10 + 3);
+  // Get star string
+  if (ranStarLoc > -1) {
+    // Get the random number of stars or default to 10
+    regex = /\[r\*(.*?)\]/;
+    var numStars = variation.match(regex);
+    var parsedNumStars = +numStars[1] || 10;
+
+    loop = Math.floor(Math.random() * parsedNumStars + 1);
   } else {
-    loop = Math.max(1, at - 3);
+    // Get the defined number of stars if any
+    regex = /\[\*(.*?)\]/;
+    var _numStars = variation.match(regex);
+
+    loop = +_numStars[1] || Math.max(1, at - parsedNumChars);
   }
 
-  for (var i = 0; i < loop; i++) {
-    stars += '*';
-  }
+  stars = getStars(stars, loop, 0);
 
-  if (variation === 'default' || variation === 'fir3rs') {
-    obfuscatedEmail = '' + email.substring(0, Math.min(3, at - 1)) + stars + email.substring(at, email.length);
-  } else if (variation === 'end3' || variation === 'end3rs') {
-    var emailNoAt = email.substring(0, at);
-    if (emailNoAt.length < 4) {
-      obfuscatedEmail = '*' + email.substring(1, email.length);
+  // Build the email str
+  if (charLoc === 0) {
+    // Variations that start with text
+    var suffix = email.substring(at);
+    obfuscatedEmail = "" + emailNoAt + stars + suffix;
+
+    if (charLoc2 < 0) {
+      if (emailNoAt.length > parsedNumChars) {
+        obfuscatedEmail =
+          "" + emailNoAt.substring(0, parsedNumChars) + stars + suffix;
+      }
     } else {
-      obfuscatedEmail = '' + stars + emailNoAt.substring(emailNoAt.length - 3, emailNoAt.length) + email.substring(at, email.length);
+      // Variation has second char set
+      if (emailNoAt.length > parsedNumChars) {
+        obfuscatedEmail =
+          "" +
+          emailNoAt.substring(0, numChars) +
+          stars +
+          emailNoAt.substring(at - numChars2) +
+          suffix;
+      }
+    }
+  } else if (ranStarLoc === 0 || staticStarLoc === 0) {
+    // Variations that starts with stars
+    obfuscatedEmail = "" + stars + email;
+    if (emailNoAt.length > parsedNumChars) {
+      obfuscatedEmail =
+        "" + stars + email.substring(at - parsedNumChars, email.length);
     }
   } else {
-    return null;
-  } // TODO: Throw error
+    throw new Error("obscure-email: Could not build string...");
+  }
 
   return obfuscatedEmail;
 };
